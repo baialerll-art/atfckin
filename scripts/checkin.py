@@ -21,12 +21,20 @@ from pathlib import Path
 
 import requests
 
-BASE_URL = os.environ.get("ARITYFLOW_BASE_URL", "https://www.arityflow.top").rstrip("/")
-USERNAME = os.environ.get("ARITYFLOW_USERNAME", "").strip()
-PASSWORD = os.environ.get("ARITYFLOW_PASSWORD", "").strip()
-TG_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
-TG_CHAT = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-QUOTA_DIVISOR = float(os.environ.get("QUOTA_DIVISOR", "5000"))
+def _env(name: str, default: str = "") -> str:
+    """Read env; treat missing or blank as default (GitHub Actions sets empty vars)."""
+    val = os.environ.get(name)
+    if val is None or not str(val).strip():
+        return default
+    return str(val).strip()
+
+
+BASE_URL = _env("ARITYFLOW_BASE_URL", "https://www.arityflow.top").rstrip("/")
+USERNAME = _env("ARITYFLOW_USERNAME")
+PASSWORD = _env("ARITYFLOW_PASSWORD")
+TG_TOKEN = _env("TELEGRAM_BOT_TOKEN")
+TG_CHAT = _env("TELEGRAM_CHAT_ID")
+QUOTA_DIVISOR = float(_env("QUOTA_DIVISOR", "5000"))
 
 OUT_DIR = Path(os.environ.get("CHECKIN_OUT_DIR", "artifacts"))
 OUT_DIR.mkdir(parents=True, exist_ok=True)
